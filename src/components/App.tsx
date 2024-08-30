@@ -1,37 +1,49 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { fetchPhotos } from "../api.js";
-import SearchBar from "./SearchBar/SearchBar.jsx";
-import ImageGallery from "./ImageGallery/ImageGallery.jsx";
-import Loader from "./Loader/Loader.jsx";
-import Error from "./Error/Error.jsx";
-import LoadMore from "./LoadMore/LoadMore.jsx";
-import ImageModal from "./ImageModal/ImageModal.jsx";
+import { fetchPhotos } from "../api";
+import SearchBar from "./SearchBar/SearchBar";
+import ImageGallery from "./ImageGallery/ImageGallery";
+import Loader from "./Loader/Loader";
+import Error from "./Error/Error";
+import LoadMore from "./LoadMore/LoadMore";
+import ImageModal from "./ImageModal/ImageModal";
 import { Toaster } from "react-hot-toast";
 
-const App = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+export interface Image {
+  id?: string;
+  created_at?: string;
+  description: string;
+  urls: Record<string, string>;
+  links?: Record<string, string>;
+  user: { name: string | null; location: string | null };
+  alt_description?: string;
+}
 
-  const [photos, setPhotos] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+export type ModalData = Image | null;
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+const App: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState({});
+  const [photos, setPhotos] = useState<Image[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const getImage = (query) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<ModalData>(null);
+
+  const getImage = (query: string): void => {
     setSearchQuery(query);
     setCurrentPage(1);
     setPhotos([]);
   };
 
-  const loadMore = () => {
+  const loadMore = (): void => {
     setCurrentPage(currentPage + 1);
   };
 
-  const openModal = (image) => {
+  const openModal = (image: Image): void => {
     setModalData(image);
     setIsModalOpen(true);
   };
